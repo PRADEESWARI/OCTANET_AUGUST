@@ -1,0 +1,156 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+body {
+    background-color: #f0f8ff; 
+    color: #333; 
+    font-family: 'Arial', sans-serif;
+}
+.card {
+    background-color: #ffffff; 
+    border: 2px solid #87ceeb;
+    border-radius: 8px;
+}
+.card-title {
+    color: #ff6347; 
+}
+.input-group input {
+    border-color: #ffa07a; /
+}
+
+.input-group .btn-primary {
+    background-color: #32cd32; 
+    border-color: #32cd32;
+}
+
+.input-group .btn-primary:hover {
+    background-color: #228b22; 
+    border-color: #228b22;
+}
+.btn-outline-secondary {
+    color: #ff69b4; 
+    border-color: #ff69b4;
+}
+.btn-outline-secondary:hover {
+    background-color: #ff69b4;
+    color: #fff;
+}
+.btn-success {
+    background-color: #48d1cc;
+    border-color: #48d1cc;
+}
+
+.btn-warning {
+    background-color: #ff4500; 
+    border-color: #ff4500;
+}
+.list-group-item {
+    background-color: #ffffff; 
+    border: 1px solid #dcdcdc;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease;
+}
+.list-group-item:hover {
+    background-color: #f5f5dc;
+}
+.list-group-item.completed {
+    text-decoration: line-through;
+    background-color: #d3d3d3; 
+    color: #696969; 
+</style>
+<body>
+    <div class="container mt-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="card-title text-center mb-4">To-Do List</h1>
+                <div class="input-group mb-3">
+                    <input type="text" id="new-task" class="form-control" placeholder="Add tasks separated by commas...">
+                    <button id="add-task" class="btn btn-primary">Add Task(s)</button>
+                </div>
+
+                <div class="btn-group mt-3" role="group" aria-label="Filter tasks">
+                    <button type="button" id="filter-all" class="btn btn-outline-secondary">All</button>
+                    <button type="button" id="filter-completed" class="btn btn-outline-secondary">Completed</button>
+                    <button type="button" id="filter-incomplete" class="btn btn-outline-secondary">Incomplete</button>
+                </div>
+
+                <ul id="task-list" class="list-group mt-3"></ul>
+
+                <button id="complete-all" class="btn btn-success mt-3">Mark Selected as Completed</button>
+                <button id="uncomplete-all" class="btn btn-warning mt-3">Mark Selected as Uncompleted</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const addTaskButton = document.getElementById("add-task");
+            const taskList = document.getElementById("task-list");
+            const completeAllButton = document.getElementById("complete-all");
+            const uncompleteAllButton = document.getElementById("uncomplete-all");
+            const filterButtons = document.querySelectorAll(".btn-group button");
+        
+            // Function to add tasks to the list
+            function addTasks() {
+                const newTaskInput = document.getElementById("new-task");
+                const tasks = newTaskInput.value.split(',').map(task => task.trim()).filter(task => task !== "");
+        
+                tasks.forEach(task => {
+                    const listItem = document.createElement("li");
+                    listItem.className = "list-group-item d-flex justify-content-between align-items-center";
+                    
+                    const taskCheckbox = document.createElement("input");
+                    taskCheckbox.type = "checkbox";
+                    taskCheckbox.className = "form-check-input me-2";
+        
+                    listItem.appendChild(taskCheckbox);
+                    listItem.appendChild(document.createTextNode(task));
+        
+                    taskList.appendChild(listItem);
+                });
+        
+                newTaskInput.value = ""; 
+            }
+            addTaskButton.addEventListener("click", addTasks);
+            function filterTasks(filter) {
+                const tasks = taskList.getElementsByTagName("li");
+                Array.from(tasks).forEach(task => {
+                    const isChecked = task.querySelector("input[type='checkbox']").checked;
+                    task.style.display = "block"; // Reset display property for all tasks
+                    if (filter === "completed" && !isChecked) {
+                        task.style.display = "none";
+                    } else if (filter === "incomplete" && isChecked) {
+                        task.style.display = "none";
+                    }
+                });
+            }
+            filterButtons.forEach(button => {
+                button.addEventListener("click", () => {
+                    filterTasks(button.id.split('-')[1]);
+                });
+            });
+            completeAllButton.addEventListener("click", () => {
+                const tasks = taskList.querySelectorAll("input[type='checkbox']:checked");
+                tasks.forEach(taskCheckbox => {
+                    const taskItem = taskCheckbox.parentElement;
+                    taskItem.classList.add("completed");
+                    taskCheckbox.checked = false;
+                });
+            });
+            uncompleteAllButton.addEventListener("click", () => {
+                const tasks = taskList.querySelectorAll("li.completed");
+                tasks.forEach(taskItem => {
+                    taskItem.classList.remove("completed");
+                });
+            });
+        });
+    </script>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
